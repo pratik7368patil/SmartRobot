@@ -2,9 +2,33 @@
 
 {% block content %}
 	<h2>Homepage</h2>
-	<p>Welcome to My site, 
+	<hr>
+	<p>Welcome to SmartRobot, 
 	{% if user.is_authenticated %}
-	 {{user.username}}!
-	{% else %} Guest! {% endif %}</p>
-	<p><strong>Total users registered:</strong>{{ count }}</p>
+		<strong>{{user.username}}!</strong>
+	{% else %} 
+		<strong>Guest!</strong> <span><strong>Note:</strong> You can not use before Login.</span>
+	{% endif %}</p>
+
+	<div class="row">
+		<div class="col">
+			<div class="jumbotron">
+				<h4 class="text-center">Bus Automation</h4>
+					<p>
+					{% if user.is_authenticated %}
+						<center><a class="btn btn-outline-primary" href="#">Play</a></center>
+					{% else %} 
+						<strong>Note: Please Login First</strong> 
+					{% endif %}</p>
+			</div>
+		</div>
+		<div class="col">
+			<div class="jumbotron text-muted">
+				<h4 class="text-center">Food Order (Coming Soon)</h4>
+				<p>Note: Prototype</p>
+			</div>
+		</div>
+	</div>
+
+	<p class="row justify-content-center"><strong>Total users registered:</strong> {{ count }}</p>
 {% endblock %}
