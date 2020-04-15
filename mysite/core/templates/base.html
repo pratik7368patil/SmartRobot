@@ -7,8 +7,14 @@
 <body>
 	<h1>My site</h1>
 	<a href="{% url 'home' %}">Home</a> / 
-	<a href="{% url 'signup' %}">Sign Up</a> /
-	<a href="{% url 'login' %}">Log in </a>
+	{% if user.is_authenticated %}
+		<a href="{% url 'password_change' %}">Change Password</a> /
+		<a href="{% url 'logout' %}">Log out</a>
+	{% else %}
+		<a href="{% url 'signup' %}">Sign Up</a> /
+		<a href="{% url 'login' %}">Log in </a> /
+	
+	{% endif %}
 	<hr>
 	{% block content %}
 	{% endblock %}
