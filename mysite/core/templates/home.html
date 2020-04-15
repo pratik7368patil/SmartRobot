@@ -2,6 +2,6 @@
 
 {% block content %}
 	<h2>Homepage</h2>
-	<p>Welcome to My site, Visitor!</p>
+	<p>Welcome to My site, {{user.username}}!</p>
 	<p><strong>Total users registered:</strong>{{ count }}</p>
 {% endblock %}
