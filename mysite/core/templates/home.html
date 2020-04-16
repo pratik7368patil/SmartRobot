@@ -7,25 +7,22 @@
 	{% if user.is_authenticated %}
 		<strong>{{user.username}}!</strong>
 	{% else %} 
-		<strong>Guest!</strong> <span><strong>Note:</strong> You can not use before Login.</span>
+		<strong>Guest!</strong> <span class="alert alert-danger"><strong>Note:</strong> You can not use before Login.</span>
 	{% endif %}</p>
 
-	<div class="row">
+	<div class="row mt-4">
 		<div class="col">
 			<div class="jumbotron">
 				<h4 class="text-center">Bus Automation</h4>
 					<p>
 					{% if user.is_authenticated %}
-						<center><a class="btn btn-outline-primary" href="#">Play</a></center>
-					{% else %} 
-						<strong>Note: Please Login First</strong> 
+						<center><a class="btn btn-outline-primary" href="{% url 'play' %}">Play</a></center>
 					{% endif %}</p>
 			</div>
 		</div>
 		<div class="col">
 			<div class="jumbotron text-muted">
 				<h4 class="text-center">Food Order (Coming Soon)</h4>
-				<p>Note: Prototype</p>
 			</div>
 		</div>
 	</div>

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 def home(request):
 	count = User.objects.count()
@@ -26,3 +27,11 @@ def signup(request):
 @login_required
 def secret_page(request):
 	return render(request, 'secret_page.html')
+
+@login_required
+def play(request):
+	#speech = Recognize_voice()
+	speech = "How are you?"
+	return render(request, 'play.html', {
+		'speech': speech
+		})
