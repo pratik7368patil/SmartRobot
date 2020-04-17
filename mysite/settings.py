@@ -10,12 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
+import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+EXTERNAL_BASE = os.path.join(BASE_DIR, "externals")
+EXTERNAL_LIBS_PATH = os.path.join(EXTERNAL_BASE, "libs")
+EXTERNAL_APPS_PATH = os.path.join(EXTERNAL_BASE, "apps")
+sys.path = ["", EXTERNAL_LIBS_PATH, EXTERNAL_APPS_PATH] + sys.path
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -39,6 +43,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mysite.core',
     'crispy_forms',
+    'bs4',
+    'nltk',
+    'numpy',
+    'pandas',
+    'pyttsx3',
+    'regex',
+    'requests',
+    'selenium',
+    'speech_recognition',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,5 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h4> >>{{speech}}</h4>
+<div class="#">
+    <div class="row justify-content-center">
+        <h5 class="alert alert-warning">Note: Book bus for me from <u>Mumbai</u> to <u>Pune</u> bus type <u>ordinary</u> on <u>23 next month</u></h5>
+    </div>
+    <div class="row justify-content-center">
+        <p>{{result}}</p>
+        <button class="btn btn-primary btn-lg" id='btnGiveCommand'>Give Command!</button>        
+    </div>
+    <br><br>
+    <ul id="cmd_ul">
+        <!--<li id='message'></li>-->
+    </ul>
+    <br><br>
+    <script>
+        var message = document.querySelector('#message');
+
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+
+        var grammar = '#JSGF V1.0;'
+
+        var recognition = new SpeechRecognition();
+        var speechRecognitionList = new SpeechGrammarList();
+        speechRecognitionList.addFromString(grammar, 1);
+        recognition.grammars = speechRecognitionList;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.onresult = function(event) {
+            var last = event.results.length - 1;
+            var command = event.results[last][0].transcript;
+            // var t = document.createTextNode(command);
+            var li = document.createElement("li");
+            var f = document.createElement("form");
+            f.setAttribute("method","get");
+            f.setAttribute("action", "{% url 'get_cmd' %}");
+            var b = document.createElement("button");
+            b.append("Execute Command");
+            b.setAttribute("class","btn btn-outline-primary btn-sm");
+            var i = document.createElement("input");
+            i.setAttribute("type", "text");
+            i.setAttribute("value", command);
+            i.setAttribute("name", "cmd");
+            f.append(i);
+            f.appendChild(b);
+            li.appendChild(f);
+            document.getElementById('cmd_ul').appendChild(li);
+            //message.textContent = 'Your Command >> ' + command + '.'; 
+        };
+
+        recognition.onspeechend = function() {
+            recognition.stop();
+        };
+
+        recognition.onerror = function(event) {
+            message.textContent = 'Error occurred in recognition: ' + event.error;
+        }        
+
+        document.querySelector('#btnGiveCommand').addEventListener('click', function(){
+            recognition.start();
+
+        });
+
+    </script>
+</div>
 {% endblock %}
