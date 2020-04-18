@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'requests',
     'selenium',
     'speech_recognition',
+    
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

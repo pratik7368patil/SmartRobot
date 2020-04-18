@@ -3,7 +3,7 @@
 {% block content %}
 <div class="#">
     <div class="row justify-content-center">
-        <h5 class="alert alert-warning">Note: Book bus for me from <u>Mumbai</u> to <u>Pune</u> bus type <u>ordinary</u> on <u>23 next month</u></h5>
+        <h5 class="alert alert-warning">Note: Book bus for me from <u>Mumbai</u> to <u>Pune</u> bus type <u>ordinary</u> on <u>23 next month</u> at <u>12:00 AM</u></h5>
     </div>
     <div class="row justify-content-center">
         <p>{{result}}</p>
@@ -13,7 +13,28 @@
     <ul id="cmd_ul">
         <!--<li id='message'></li>-->
     </ul>
-    <br><br>
+    <br>
+    <div class="card">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Travels Name</th>
+              <th scope="col">Bus Type</th>
+              <th scope="col">Price</th>
+              <th scope="col">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for each_row in scrap_data %}
+                <tr>
+                    {% for row in each_row %}
+                      <td>{{ row }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
     <script>
         var message = document.querySelector('#message');
 
