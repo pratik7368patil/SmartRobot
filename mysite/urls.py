@@ -26,4 +26,6 @@ urlpatterns = [
     path('get_cmd/', views.get_cmd, name='get_cmd'),
 	path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
+    path('user_form/', views.user_form, name='user_form'),
+    path('profile/', views.user_data, name='profile'),
 ]

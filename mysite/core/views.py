@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 import pyttsx3
 import webbrowser
@@ -11,6 +12,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import os
+import json
 # from quick_book_v1 import exter_book_quick_play
 
 # Create your views here.
@@ -20,13 +22,48 @@ def home(request):
 		'count': count
 		})
 
+def write_user_data(data_info):
+	def write_json(data, filename='user_info.json'):
+		with open(filename, 'w') as f:
+			json.dump(data, f, indent=4)
+	with open('user_info.json') as json_file:
+		data = json.load(json_file)
+		temp = data['user_data']
+		y = {
+			'f_name':data_info[0],
+			'l_name':data_info[1],
+			'gender':data_info[2],
+			'email':data_info[3],
+			'age': data_info[4],
+		}
+		temp.append(y)
+	write_json(data)
+		
+
+def user_form(request):
+	data = []
+	if request.method == 'GET':
+		f_name = request.GET.get('f_name')
+		data.append(f_name)
+		l_name = request.GET.get('l_name')
+		data.append(l_name)
+		gender = request.GET.get('gender')
+		data.append(gender)
+		email = request.GET.get('email')
+		data.append(email)
+		age = request.GET.get('age')
+		data.append(age)
+		write_user_data(data)
+		flag = 'Data Stored Successfully!'
+	return render(request, 'success.html',{'flag': flag})
+	
 
 def signup(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
 		if form.is_valid():
 			form.save()
-			return redirect('home')
+			return redirect('login')
 	else:
 		form = UserCreationForm()
 	return render(request, 'registration/signup.html', {
@@ -211,6 +248,10 @@ def get_cmd(request):
 			v = "/html/body/section/div[2]/div[1]/div/div[2]/div[2]/div[2]/ul/div["+ str(count) +"]/li/div/div[2]/div[1]"
 			ele = driver.find_element_by_xpath(v)
 			driver.execute_script("arguments[0].click();", ele)
+			# their is only one way to verify and click on seats using Action Chain
+			# if you dont have solution then use manual interface to select seat in 30 sec sleep all processes for 30 sec so user can select seat
+
+
 
 		#scrap_data = [['Testing Name','Testing','312','12:00'],['dummy','dum','123','1:00']]
 		return render(request, 'play.html', {'res_name':res[0], 'res_type':res[1],'res_price': res[2],'res_time':res[3]})
@@ -221,10 +262,11 @@ def secret_page(request):
 	return render(request, 'secret_page.html')
 
 @login_required
+def user_data(request):
+	return render(request, 'user_form.html')
+
+@login_required
 def play(request):
-	engine = pyttsx3.init()
-	engine.say("You Just Started the flow")
-	engine.runAndWait()
 	return render(request, 'play.html')
 
 def how_work(request):

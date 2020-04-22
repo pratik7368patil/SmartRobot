@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+	<div class="row justify-content-center mb-4">
+		<div class="col-6">
+			<div class="card">
+				<div class="card-body">
+					<h2>Sign Up</h2>
+					<form method="get" action="{% url 'user_form' %}">
+						<div class="form-group">
+							<label for="f_name">First Name:</label>
+							<input type="text" name="f_name" id="f_name" class="form-control">
+                        </div>
+                        <div class="form-group">
+							<label for="l_name">Last Name:</label>
+							<input type="text" name="l_name" id="l_name" class="form-control">
+                        </div>
+                        <div class="form-group">
+							<label for="age">Age:</label>
+							<input type="text" name="age" id="age" class="form-control">
+						</div>
+                        <div class="form-group">
+							<label for="gender">Gender:</label>
+							<select class="form-control" name="gender" id="gender">
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+							<label for="email">Email:</label>
+							<input type="text" name="email" id="email" class="form-control">
+						</div>
+						<button type="submit" class="btn btn-primary">Sign Up</button>
+					</form>	
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
