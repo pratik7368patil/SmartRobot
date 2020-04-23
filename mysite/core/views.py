@@ -35,6 +35,7 @@ def write_user_data(data_info):
 			'gender':data_info[2],
 			'email':data_info[3],
 			'age': data_info[4],
+			'phone_number':data_info[5],
 		}
 		temp.append(y)
 	write_json(data)
@@ -53,6 +54,8 @@ def user_form(request):
 		data.append(email)
 		age = request.GET.get('age')
 		data.append(age)
+		phone_number = request.GET.get('phone_number')
+		data.append(phone_number)
 		write_user_data(data)
 		flag = 'Data Stored Successfully!'
 	return render(request, 'success.html',{'flag': flag})
@@ -248,10 +251,47 @@ def get_cmd(request):
 			v = "/html/body/section/div[2]/div[1]/div/div[2]/div[2]/div[2]/ul/div["+ str(count) +"]/li/div/div[2]/div[1]"
 			ele = driver.find_element_by_xpath(v)
 			driver.execute_script("arguments[0].click();", ele)
+			time.sleep(3)
+			engine.say("Please Select your seat you have 30 seconds.")
+			engine.runAndWait()
+			time.sleep(35)
 			# their is only one way to verify and click on seats using Action Chain
 			# if you dont have solution then use manual interface to select seat in 30 sec sleep all processes for 30 sec so user can select seat
-
-
+			with open('user_info.json') as f:
+				data = json.load(f)
+			try:
+				h_map = data['user_data'][-1]
+			except:
+				engine.say("Please add profile Data")
+				engine.runAndWait()
+			boarding_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
+			driver.find_element_by_xpath(boarding_point).click()
+			time.sleep(3)
+			destination_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
+			driver.find_element_by_xpath(destination_point).click()
+			time.sleep(3)
+			pro_book_btn = "//*[text()='Proceed to book']"
+			driver.find_element_by_xpath(pro_book_btn).click()
+			time.sleep(5)
+			# now start filling out form
+			name_add = "//*[@class='custinfo_label']/input[@placeholder='Name']"
+			driver.find_element_by_xpath(name_add).send_keys(h_map['f_name']+ " " + h_map['l_name'])
+			age_add = "//*[@class='custinfo_label']/input[@placeholder='Age']"				
+			driver.find_element_by_xpath(age_add).send_keys(h_map["age"])
+			male_add = "//*[@id='div_22_0']"
+			female_add = "//*[@id='div_23_0']"
+			if h_map["gender"] == "Male":
+				driver.find_element_by_xpath(male_add).click()
+			else:
+				driver.find_element_by_xpath(female_add).click()
+			email_add = "//*[@class='custinfo_label']/input[@placeholder='Email ID']"
+			driver.find_element_by_xpath(email_add).send_keys(h_map['email'])
+			phone_add = "//*[@class='custinfo_label']/input[@placeholder='Phone']"
+			driver.find_element_by_xpath(phone_add).send_keys(h_map['phone_number'])
+			pay_btn_add = "//*[@value='Proceed to pay']"
+			driver.find_element_by_xpath(pay_btn_add).click()
+			engine.say("Make payment Manually and you will get your ticket to your Mail and Whatsapp")
+			engine.runAndWait()
 
 		#scrap_data = [['Testing Name','Testing','312','12:00'],['dummy','dum','123','1:00']]
 		return render(request, 'play.html', {'res_name':res[0], 'res_type':res[1],'res_price': res[2],'res_time':res[3]})

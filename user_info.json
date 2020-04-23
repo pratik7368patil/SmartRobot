@@ -13,6 +13,14 @@
             "gender": "Male",
             "email": "Pratik7368Patil@gmail.com",
             "age": "21"
+        },
+        {
+            "f_name": "Pratik",
+            "l_name": "Patil",
+            "gender": "Male",
+            "email": "Pratik7368Patil@gmail.com",
+            "age": "21",
+            "phone_number": "08805100927"
         }
     ]
 }
