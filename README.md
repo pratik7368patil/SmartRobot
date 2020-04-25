@@ -1,2 +1,2 @@
-# Django_login
-Here is the basic authentication system using Django
+# Automation Using Django (SmartRobot)
+Bus automation on redbus using Django and voice recognition with NLP's information extraction
