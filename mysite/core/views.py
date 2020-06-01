@@ -81,15 +81,26 @@ def get_cmd(request):
 		# now do your work here and return the result to play.html
 		# ------------Default Query is---------------
 		# book bus for me from Mumbai to Pune on 23 next month at 13
+		engine = pyttsx3.init()
 		tokenized = nltk.word_tokenize(cmd)
 		query = [word for (word, pos) in nltk.pos_tag(tokenized) if(pos[:2] == 'NN' or pos[:2] == 'CD' or pos[:2] == 'JJ')]
 		if query[0]+query[1] == 'bookbus': # if this is valid extract all data 
 			source_city = query[2]
-			des_city = query[3] 
-			try:
-				booking_time = str(query[7]) + ":00"
-			except:
-				None
+			des_city = query[3]
+			if query[5] != 'next':
+				try:
+					booking_time = str(query[6]) + ":00"
+					engine.say("your booking time is "+ str(booking_time))
+				except:
+					engine.say('Booking time not recognized')
+					booking_time = 0
+			else:
+				try:
+					booking_time = str(query[7]) + ":00"
+					engine.say("your booking time is "+ str(booking_time))
+				except:
+					engine.say('Booking time not recognized')
+					booking_time = 0
 
 			dd = query[4]
 			mm = query[5]
@@ -104,7 +115,6 @@ def get_cmd(request):
 						yyyy = x.replace(year=x.year + 1).strftime("%Y")
 			else:
 				None
-			engine = pyttsx3.init()
 			engine.say("Your Source City is "+source_city)
 			engine.say(" your destination city is "+des_city)
 			engine.say(" and date is" +dd+" "+mm+ " "+yyyy)
@@ -161,6 +171,13 @@ def get_cmd(request):
 			time.sleep(10)
 			try:
 				driver.find_element_by_xpath("//div[text()='View Buses']").click()
+			except:
+				None
+			# first we need to validate existance of bus
+			try:
+				val_err1 = driver.find_element_by_xpath("//*[@id='root']/div/div[2]/div/h3")
+				engine.say(val_err1.text)
+				engine.runAndWait()
 			except:
 				None
 			# now we need to extract all data from website to suggest some good buses
