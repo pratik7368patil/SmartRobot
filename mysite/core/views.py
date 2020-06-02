@@ -150,13 +150,31 @@ def get_cmd(request):
 			driver.maximize_window()
 			time.sleep(1)
 			# place source city
-			driver.find_element_by_id('src').send_keys(source_city)
+			try:
+				driver.find_element_by_id('src').send_keys(source_city)
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			time.sleep(3)
 			# place destination city
-			driver.find_element_by_id('dest').send_keys(des_city)
+			try:
+				driver.find_element_by_id('dest').send_keys(des_city)
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			time.sleep(3)
 			# select date on calender first you need to open cal so we just pass dummy value
-			driver.find_element_by_id('onward_cal').send_keys('0')
+			try:
+				driver.find_element_by_id('onward_cal').send_keys('0')
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			# define function which convert month to numeric value for next process
 			def month_to_number(string):
 				m = {
@@ -211,7 +229,13 @@ def get_cmd(request):
 			# now we need to extract all data from website to suggest some good buses
 			# to do this we need to extract current pageand then add this all data to csv file for management 
 			# remove all redudent data and filter it to get good results
-			content = driver.page_source
+			try:
+				content = driver.page_source
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Page Not Found! please check your network."
+				return render(request, 'error.html', {'error_msg':error_msg})
 			soup = BeautifulSoup(content, 'html.parser')
 			# use same info var for finding minimum at given time and for next process
 			info = soup.find_all('div', attrs={'class': 'clearfix row-one'})
@@ -317,32 +341,88 @@ def get_cmd(request):
 				return render(request, 'error.html', {'error_msg': error_msg})
 				
 			# this will select boarding and destination automatically
-			boarding_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
+			try:
+				boarding_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(boarding_point).click()
 			time.sleep(3)
-			destination_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
+			try:
+				destination_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(destination_point).click()
 			time.sleep(3)
-			pro_book_btn = "//*[text()='Proceed to book']"
+			try:
+				pro_book_btn = "//*[text()='Proceed to book']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(pro_book_btn).click()
 			time.sleep(5)
 			# now start filling out form
-			name_add = "//*[@class='custinfo_label']/input[@placeholder='Name']"
+			try:
+				name_add = "//*[@class='custinfo_label']/input[@placeholder='Name']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(name_add).send_keys(h_map[0]+ " " + h_map[1])
-			age_add = "//*[@class='custinfo_label']/input[@placeholder='Age']"				
+			try:
+				age_add = "//*[@class='custinfo_label']/input[@placeholder='Age']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(age_add).send_keys(h_map[4])
-			male_add = "//*[@id='div_22_0']"
-			female_add = "//*[@id='div_23_0']"
+			try:
+				male_add = "//*[@id='div_22_0']"
+				female_add = "//*[@id='div_23_0']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
+
 			if h_map[2] == "Male":
 				driver.find_element_by_xpath(male_add).click()
 			else:
 				driver.find_element_by_xpath(female_add).click()
-			email_add = "//*[@class='custinfo_label']/input[@placeholder='Email ID']"
+			try:
+				email_add = "//*[@class='custinfo_label']/input[@placeholder='Email ID']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
+
 			driver.find_element_by_xpath(email_add).send_keys(h_map[3])
-			phone_add = "//*[@class='custinfo_label']/input[@placeholder='Phone']"
+			try:
+				phone_add = "//*[@class='custinfo_label']/input[@placeholder='Phone']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(phone_add).send_keys(h_map[5])
 			# end form now click on pay button
-			pay_btn_add = "//*[@value='Proceed to pay']"
+			try:
+				pay_btn_add = "//*[@value='Proceed to pay']"
+			except:
+				engine.say('unable to find source')
+				engine.runAndWait()
+				error_msg = "Unable to locate element!"
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(pay_btn_add).click()
 			engine.say("Make payment Manually. You will get your ticket to your Mail and Whatsapp")
 			engine.runAndWait()
