@@ -258,11 +258,15 @@ def get_cmd(request):
 
 			df = pd.DataFrame({'Travels Name': name_, 'Bus Type': type_, 'Price': price_, 'Time': time_})
 			# data_file_path = os.path.dirname(os.path.realpath('./data/data_handling.csv'))
-			df.to_csv('data_handling.csv', index=False, encoding='utf-8')
+			# create file on users system to manipulate data
+			username = os.getlogin()
+			filepath = 'C:\\Users\\'+username+'\\Documents\\ bus_info.csv'
+			open(filepath, 'wb')
+			df.to_csv(filepath, index=False, encoding='utf-8')
 			# do not close browser use same for next process
 
 			# making data frame from file
-			data = pd.read_csv('data_handling.csv', delimiter=',')
+			data = pd.read_csv(filepath, delimiter=',')
 			
 			# replaceing black sapces with underscore sign '_'
 			data.columns = [column.replace(" ", "_") for column in data.columns]
