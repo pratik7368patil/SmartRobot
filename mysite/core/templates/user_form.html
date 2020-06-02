@@ -8,32 +8,32 @@
 					<form method="get" action="{% url 'user_form' %}">
 						<div class="form-group">
 							<label for="f_name">First Name:</label>
-							<input type="text" name="f_name" id="f_name" class="form-control">
+							<input type="text" name="f_name" id="f_name" class="form-control" required>
                         </div>
                         <div class="form-group">
 							<label for="l_name">Last Name:</label>
-							<input type="text" name="l_name" id="l_name" class="form-control">
+							<input type="text" name="l_name" id="l_name" class="form-control" required>
                         </div>
                         <div class="form-group">
 							<label for="age">Age:</label>
-							<input type="text" name="age" id="age" class="form-control">
+							<input type="text" name="age" id="age" class="form-control" required>
 						</div>
                         <div class="form-group">
 							<label for="gender">Gender:</label>
-							<select class="form-control" name="gender" id="gender">
+							<select class="form-control" name="gender" id="gender" required>
                                 <option>Male</option>
                                 <option>Female</option>
                             </select>
                         </div>
                         <div class="form-group">
 							<label for="email">Email:</label>
-							<input type="text" name="email" id="email" class="form-control">
+							<input type="text" name="email" id="email" class="form-control" required>
 						</div>
 						<div class="form-group">
 							<label for="phone_number">Phone Number:</label>
-							<input type="text" name="phone_number" id="phone_number" class="form-control">
+							<input type="text" name="phone_number" id="phone_number" class="form-control" required>
 						</div>
-						<button type="submit" class="btn btn-primary">Sign Up</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</form>	
 				</div>
 			</div>

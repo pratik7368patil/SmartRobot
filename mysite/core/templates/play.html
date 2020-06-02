@@ -3,10 +3,14 @@
 {% block content %}
 <div class="#">
     <div class="row justify-content-center">
+        <h5 class="alert alert-danger">Your Previous Command: {{ error_msg }}</h5>
+    </div>
+    <div class="row justify-content-center">
         <h5 class="alert alert-warning">Note: Book bus for me from <u>Mumbai</u> to <u>Pune</u> on <u>23 next month</u> at <u>13</u> (Time format -- 24-hr)</h5>
     </div>
     <div class="row justify-content-center">
-        <button class="btn btn-primary btn-lg" id='btnGiveCommand'>Give Command!</button>        
+        <button class="btn btn-outline-success btn-lg mr-2" id='btnGiveCommand'>Give Voice Command!</button>
+        <button class="btn btn-outline-success btn-lg ml-2" id='btnGivetxtCommand' onclick="text_input()">Give Text Command!</button>        
     </div>
     <br><br>
     <ul id="cmd_ul">
@@ -14,7 +18,7 @@
     </ul>
     <br>
     <div class="row justify-content-center">
-        <h4>Minimum Cost Bus at your Time</h4>
+        <h4>Bus found at your Time!</h4>
     </div>
     <div class="card" style="padding: 20px 20px 20px 20px">
         <table class="table">
@@ -70,6 +74,7 @@
             i.setAttribute("name", "cmd");
             i.setAttribute("class", "form-control");
             i.setAttribute("style", "margin-bottom:10px");
+            i.required = true;
             f.append(i);
             f.appendChild(b);
             li.appendChild(f);
@@ -80,9 +85,35 @@
         recognition.onspeechend = function() {
             recognition.stop();
         };
-
+        function text_input() {
+            var li = document.createElement("li");
+            var f = document.createElement("form");
+            li.setAttribute("style", "margin-bottom: 20px");
+            f.setAttribute("method","get");
+            f.setAttribute("action", "{% url 'get_cmd' %}");
+            f.setAttribute("class", "card col-6");
+            f.setAttribute('style', 'padding:10px 10px 10px 10px');
+            var b = document.createElement("button");
+            b.append("Execute Command");
+            b.setAttribute("class","btn btn-outline-success btn-sm");
+            var i = document.createElement("input");
+            i.setAttribute("type", "text");
+            i.setAttribute("name", "cmd");
+            i.setAttribute("class", "form-control");
+            i.setAttribute("style", "margin-bottom:10px");
+            i.required = true;
+            f.append(i);
+            f.appendChild(b);
+            li.appendChild(f);
+            document.getElementById('cmd_ul').appendChild(li);
+            document.getElementById('btnGivetxtCommand').disabled = true;
+            b = document.getElementById('btnGivetxtCommand')
+            b.setAttribute('class', 'btn btn-outline-danger')
+            b.innerHTML = 'Disabled'
+        }
         recognition.onerror = function(event) {
-            message.textContent = 'Error occurred in recognition: ' + event.error;
+            //cmd_ul.textContent = 'Error occurred in recognition: ' + event.error;
+            alert("Error occurred in recognition: "+ event.error +"\nPlease try again!");
         }        
 
         document.querySelector('#btnGiveCommand').addEventListener('click', function(){

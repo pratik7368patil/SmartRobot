@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<h2>Homepage</h2>
-	<hr>
-	<p>Welcome to SmartRobot, 
+	 
 	{% if user.is_authenticated %}
-		<strong>{{user.username}}!</strong>
+		
 	{% else %} 
-		<strong>Guest!</strong> <span class="row justify-content-center alert alert-danger"><strong>Note:</strong> You can not use before Login.</span>
-	{% endif %}</p>
+		<span class="row justify-content-center alert alert-danger"><strong>Note:</strong> You can not use before Login.</span>
+	{% endif %}</>
 
 	<div class="row mt-4">
 		<div class="col">
@@ -16,14 +14,17 @@
 				<h4 class="text-center">Bus Automation</h4>
 					<p>
 					{% if user.is_authenticated %}
-						<center><a class="btn btn-outline-primary" href="{% url 'play' %}">Start Here</a></center>
+						<center><a class="btn btn-outline-success" href="{% url 'play' %}">Start Here</a></center>
 					{% endif %}</p>
 			</div>
 		</div>
 		<div class="col">
 			<div class="jumbotron text-muted">
 				<h4 class="text-center">Food Order (Coming Soon)</h4>
-				
+				<p>
+					{% if user.is_authenticated %}
+						<center><button class="btn btn-outline-danger" href="#" disabled>Start Here</button></center>
+					{% endif %}</p>
 			</div>
 		</div>
 	</div>

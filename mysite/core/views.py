@@ -22,11 +22,11 @@ def home(request):
 		'count': count
 		})
 
-def write_user_data(data_info):
-	def write_json(data, filename='user_info.json'):
-		with open(filename, 'w') as f:
-			json.dump(data, f, indent=4)
-	with open('user_info.json') as json_file:
+""" def write_user_data(data_info, f):
+	def write_json(data, f):
+		with open(f, 'w') as fa:
+			json.dump(data, fa, indent=4)
+	with open(f) as json_file:
 		data = json.load(json_file)
 		temp = data['user_data']
 		y = {
@@ -38,25 +38,27 @@ def write_user_data(data_info):
 			'phone_number':data_info[5],
 		}
 		temp.append(y)
-	write_json(data)
+	write_json(data) """
 		
 
 def user_form(request):
-	data = []
 	if request.method == 'GET':
+		username = os.getlogin()
+		f = open(f'C:\\Users\\{username}\\Documents\\ user_info.txt', 'w')
 		f_name = request.GET.get('f_name')
-		data.append(f_name)
+		f.write(f_name)
 		l_name = request.GET.get('l_name')
-		data.append(l_name)
+		f.write('\n'+l_name)
 		gender = request.GET.get('gender')
-		data.append(gender)
+		f.write('\n'+gender)
 		email = request.GET.get('email')
-		data.append(email)
+		f.write('\n'+email)
 		age = request.GET.get('age')
-		data.append(age)
+		f.write('\n'+age)
 		phone_number = request.GET.get('phone_number')
-		data.append(phone_number)
-		write_user_data(data)
+		f.write('\n'+phone_number)
+		f.close()
+		#write_user_data(data, 'C:\\Users\\'+username+'\\Documents\\ user_info.json')
 		flag = 'Data Stored Successfully!'
 	return render(request, 'success.html',{'flag': flag})
 	
@@ -76,32 +78,52 @@ def signup(request):
 def get_cmd(request):
 	if request.GET.get('cmd'):
 		cmd = request.GET.get('cmd')
+		if len(cmd) <= 0:
+			error_msg = "Command is empty!"
+			return render(request, "error.html", {'error_msg': error_msg})
 		# webbrowser.open("https://www.redbus.in/")
 		# result = exter_book_quick_play(cmd)
 		# now do your work here and return the result to play.html
 		# ------------Default Query is---------------
 		# book bus for me from Mumbai to Pune on 23 next month at 13
-		engine = pyttsx3.init()
+		# ----------------------------------------------------S
+		engine = pyttsx3.init()    # voice status updator
 		tokenized = nltk.word_tokenize(cmd)
+		if len(tokenized) < 6 :
+			engine.say("Please check your command")
+			engine.runAndWait()
+			error_msg = cmd
+			return render(request, 'play.html', {'error_msg': error_msg})
 		query = [word for (word, pos) in nltk.pos_tag(tokenized) if(pos[:2] == 'NN' or pos[:2] == 'CD' or pos[:2] == 'JJ')]
 		if query[0]+query[1] == 'bookbus': # if this is valid extract all data 
 			source_city = query[2]
 			des_city = query[3]
+			# manage time 
 			if query[5] != 'next':
 				try:
-					booking_time = str(query[6]) + ":00"
-					engine.say("your booking time is "+ str(booking_time))
+					if len(query[6]) > 2:
+						booking_time = query[6]
+					else:
+						booking_time = str(query[6] + ":00")
+						engine.say("your booking time is "+ str(booking_time))
 				except:
-					engine.say('Booking time not recognized')
+					engine.say('Booking time not recognized.')
+					engine.say('This may encounter some errors')
+					engine.runAndWait()
 					booking_time = 0
 			else:
 				try:
-					booking_time = str(query[7]) + ":00"
-					engine.say("your booking time is "+ str(booking_time))
+					if len(query[7]) > 2:
+						booking_time = query[7]
+					else:
+						booking_time = str(query[7]) + ":00"
+						engine.say("your booking time is "+ str(booking_time))
 				except:
 					engine.say('Booking time not recognized')
+					engine.say('This may encounter some errors')
+					engine.runAndWait()
 					booking_time = 0
-
+			# time extraction successful
 			dd = query[4]
 			mm = query[5]
 			x = date.today()
@@ -120,11 +142,12 @@ def get_cmd(request):
 			engine.say(" and date is" +dd+" "+mm+ " "+yyyy)
 			engine.say("Relax and do your work.")
 			engine.runAndWait()
+			# extraction of data successful.
 			# scrap data from webpages of given url
-			driver = webdriver.Chrome("c:\Final Year Project\Chrome Driver\chromedriver.exe")
-			driver.maximize_window()
+			driver = webdriver.Chrome("c:\Final Year Project\Chrome Driver\chromedriver.exe") # 83 version
 			url = "https://redbus.in/"
 			driver.get(url)
+			driver.maximize_window()
 			time.sleep(1)
 			# place source city
 			driver.find_element_by_id('src').send_keys(source_city)
@@ -172,12 +195,17 @@ def get_cmd(request):
 			try:
 				driver.find_element_by_xpath("//div[text()='View Buses']").click()
 			except:
-				None
-			# first we need to validate existance of bus
+				engine.say("their are no government buses available at the moment")
+				engine.say("I will search for private buses")
+				engine.runAndWait()
+			# first we need to validate existance of buses if there is no bus available
+			# redirect to error page
 			try:
 				val_err1 = driver.find_element_by_xpath("//*[@id='root']/div/div[2]/div/h3")
 				engine.say(val_err1.text)
 				engine.runAndWait()
+				error_msg = "No buses found! Please try to search for new Date or Time."
+				return render(request, 'error.html', {'error_msg': error_msg})
 			except:
 				None
 			# now we need to extract all data from website to suggest some good buses
@@ -237,7 +265,8 @@ def get_cmd(request):
 				engine.say("Bus not found now you have to do it by yourself")
 				engine.say("You can give me new information for booking")
 				engine.runAndWait()
-				result = "Not Found"
+				result = "Bus Not Found! Please try to search for new Date or Time."
+				return render(request, 'error.html', {'error_msg': result})
 			else:
 				engine.say("Bus found at your time")
 				engine.runAndWait()
@@ -267,20 +296,27 @@ def get_cmd(request):
 					break
 			v = "/html/body/section/div[2]/div[1]/div/div[2]/div[2]/div[2]/ul/div["+ str(count) +"]/li/div/div[2]/div[1]"
 			ele = driver.find_element_by_xpath(v)
-			driver.execute_script("arguments[0].click();", ele)
+			driver.execute_script("arguments[0].click();", ele) # help from stackoverflow
 			time.sleep(3)
 			engine.say("Please Select your seat you have 30 seconds.")
 			engine.runAndWait()
-			time.sleep(35)
+			time.sleep(30)
 			# their is only one way to verify and click on seats using Action Chain
+			# which works with screen co-ordinates and that can be differ
 			# if you dont have solution then use manual interface to select seat in 30 sec sleep all processes for 30 sec so user can select seat
-			with open('user_info.json') as f:
-				data = json.load(f)
-			try:
-				h_map = data['user_data'][-1]
-			except:
+			username = os.getlogin()
+			openfile = open(f'C:\\Users\\{username}\\Documents\\ user_info.txt') # open file locally
+			con = openfile.read()
+			openfile.close()
+			if len(con) != 0:   # check for content
+				h_map = con.split('\n')
+			else:
 				engine.say("Please add profile Data")
 				engine.runAndWait()
+				error_msg = "Please add your Profile Data. Click on Your Name (Top Right Side) >> Add Profile Data."
+				return render(request, 'error.html', {'error_msg': error_msg})
+				
+			# this will select boarding and destination automatically
 			boarding_point = "//*[@class='modal-body oa-y']/ul/li/div[3]/span"
 			driver.find_element_by_xpath(boarding_point).click()
 			time.sleep(3)
@@ -292,25 +328,30 @@ def get_cmd(request):
 			time.sleep(5)
 			# now start filling out form
 			name_add = "//*[@class='custinfo_label']/input[@placeholder='Name']"
-			driver.find_element_by_xpath(name_add).send_keys(h_map['f_name']+ " " + h_map['l_name'])
+			driver.find_element_by_xpath(name_add).send_keys(h_map[0]+ " " + h_map[1])
 			age_add = "//*[@class='custinfo_label']/input[@placeholder='Age']"				
-			driver.find_element_by_xpath(age_add).send_keys(h_map["age"])
+			driver.find_element_by_xpath(age_add).send_keys(h_map[4])
 			male_add = "//*[@id='div_22_0']"
 			female_add = "//*[@id='div_23_0']"
-			if h_map["gender"] == "Male":
+			if h_map[2] == "Male":
 				driver.find_element_by_xpath(male_add).click()
 			else:
 				driver.find_element_by_xpath(female_add).click()
 			email_add = "//*[@class='custinfo_label']/input[@placeholder='Email ID']"
-			driver.find_element_by_xpath(email_add).send_keys(h_map['email'])
+			driver.find_element_by_xpath(email_add).send_keys(h_map[3])
 			phone_add = "//*[@class='custinfo_label']/input[@placeholder='Phone']"
-			driver.find_element_by_xpath(phone_add).send_keys(h_map['phone_number'])
+			driver.find_element_by_xpath(phone_add).send_keys(h_map[5])
+			# end form now click on pay button
 			pay_btn_add = "//*[@value='Proceed to pay']"
 			driver.find_element_by_xpath(pay_btn_add).click()
-			engine.say("Make payment Manually and you will get your ticket to your Mail and Whatsapp")
+			engine.say("Make payment Manually. You will get your ticket to your Mail and Whatsapp")
 			engine.runAndWait()
-
-		#scrap_data = [['Testing Name','Testing','312','12:00'],['dummy','dum','123','1:00']]
+		else:
+			engine.say("Please check your command!")
+			engine.runAndWait()
+			error_msg = cmd
+			return render(request, 'play.html', {'error_msg': error_msg})
+		#scrap_data = [['Testing Name','Testing','312','12:00'],['dummy','dum','123','1:00']] ##### test case 1
 		return render(request, 'play.html', {'res_name':res[0], 'res_type':res[1],'res_price': res[2],'res_time':res[3]})
 
 

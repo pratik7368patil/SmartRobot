@@ -1,4 +1,4 @@
 {% extends 'base.html' %}
 {% block content %}
-<h4 class="alert alert-success">{{ flag }}</h4>
+<h4 class="alert alert-success">{{ flag }} <a href="{% url 'home' %}" class="btn btn-outline-primary">Back to home!</a></h4>
 {% endblock %}
