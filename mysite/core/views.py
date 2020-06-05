@@ -144,7 +144,7 @@ def get_cmd(request):
 			engine.runAndWait()
 			# extraction of data successful.
 			# scrap data from webpages of given url
-			driver = webdriver.Chrome("c:\Final Year Project\Chrome Driver\chromedriver.exe") # 83 version
+			driver = webdriver.Chrome("chromedriver.exe") # 83 version
 			url = "https://redbus.in/"
 			driver.get(url)
 			driver.maximize_window()
@@ -223,6 +223,7 @@ def get_cmd(request):
 				engine.say(val_err1.text)
 				engine.runAndWait()
 				error_msg = "No buses found! Please try to search for new Date or Time."
+				driver.close()
 				return render(request, 'error.html', {'error_msg': error_msg})
 			except:
 				None
