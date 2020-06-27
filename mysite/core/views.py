@@ -323,8 +323,15 @@ def get_cmd(request):
 				tm = a.find('div', attrs={'class': 'dp-time f-19 d-color f-bold'})
 				if n.text.replace(" ","") == new_res[0] and tm.text == new_res[3]:
 					break
-			v = "/html/body/section/div[2]/div[1]/div/div[2]/div[2]/div[2]/ul/div["+ str(count) +"]/li/div/div[2]/div[1]"
-			ele = driver.find_element_by_xpath(v)
+			try:
+				new_v = "/html/body/section/div[2]/div[1]/div/div[2]/div[2]/div[3]/ul/div["+ str(count) +"]/li/div/div[2]/div[1]"
+				#v = "/html/body/section/div[2]/div[1]/div/div[2]/div[2]/div[2]/ul/div["+ str(count) +"]/li/div/div[2]/div[1]"
+				ele = driver.find_element_by_xpath(new_v)
+			except:
+				error_msg = "Need to update!"
+				engine.say("Something went wrong! You need to upgrade!")
+				engine.runAndWait()
+				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.execute_script("arguments[0].click();", ele) # help from stackoverflow
 			time.sleep(3)
 			engine.say("Please Select your seat you have 30 seconds.")
@@ -334,7 +341,13 @@ def get_cmd(request):
 			# which works with screen co-ordinates and that can be differ
 			# if you dont have solution then use manual interface to select seat in 30 sec sleep all processes for 30 sec so user can select seat
 			username = os.getlogin()
-			openfile = open(f'C:\\Users\\{username}\\Documents\\ user_info.txt') # open file locally
+			try:
+				openfile = open(f'C:\\Users\\{username}\\Documents\\ user_info.txt') # open file locally
+			except:
+				engine.say("Your information not found!")
+				engine.runAndWait()
+				driver.close()
+				return render(request,'error.html', {'error_msg': 'Please fill up your information in profile section.'})
 			con = openfile.read()
 			openfile.close()
 			if len(con) != 0:   # check for content
@@ -374,6 +387,17 @@ def get_cmd(request):
 			driver.find_element_by_xpath(pro_book_btn).click()
 			time.sleep(5)
 			# now start filling out form
+			# if covid notification available
+			time.sleep(1)
+			try:
+				covid_noti = "//*[contains(text(), 'I/We confirm that I/we agree to the following guidelines']"
+				driver.find_elements_by_xpath(covid_noti).click()
+			except:
+				engine.say("can not able to click on element")
+				engine.runAndWait()
+				None
+			# normal form starts here
+			# for Name
 			try:
 				name_add = "//*[@class='custinfo_label']/input[@placeholder='Name']"
 			except:
@@ -382,6 +406,7 @@ def get_cmd(request):
 				error_msg = "Unable to locate element!"
 				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(name_add).send_keys(h_map[0]+ " " + h_map[1])
+			# for Age
 			try:
 				age_add = "//*[@class='custinfo_label']/input[@placeholder='Age']"
 			except:
@@ -390,6 +415,7 @@ def get_cmd(request):
 				error_msg = "Unable to locate element!"
 				return render(request, 'error.html', {'error_msg':error_msg})
 			driver.find_element_by_xpath(age_add).send_keys(h_map[4])
+			# for Gender
 			try:
 				male_add = "//*[@id='div_22_0']"
 				female_add = "//*[@id='div_23_0']"
@@ -403,6 +429,7 @@ def get_cmd(request):
 				driver.find_element_by_xpath(male_add).click()
 			else:
 				driver.find_element_by_xpath(female_add).click()
+			# for Email
 			try:
 				email_add = "//*[@class='custinfo_label']/input[@placeholder='Email ID']"
 			except:
